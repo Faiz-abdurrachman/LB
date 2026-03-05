@@ -1,14 +1,15 @@
 "use client";
 
+import { useState, useEffect, useRef } from "react";
 import { usePool } from "@/hooks/usePool";
 import { useNAV } from "@/hooks/useNAV";
 import { formatUSDC, formatRWA, formatNAV, cn } from "@/lib/utils";
 import { NAVChart } from "./NAVChart";
-import { Activity, DollarSign, BarChart3, Shield, AlertTriangle } from "lucide-react";
+import { Activity, DollarSign, BarChart3, Shield, AlertTriangle, TrendingUp, TrendingDown } from "lucide-react";
 
 export function PoolDashboard() {
-  const { poolState, totalVolume, totalFees, swapCount, currentFee, impliedPrice } = usePool();
-  const { nav, reserveRatio, isStale, history } = useNAV();
+  const { poolState, totalVolume, totalFees, swapCount, currentFee, impliedPrice, isLoading } = usePool();
+  const { nav, timestamp, reserveRatio, isStale, history } = useNAV();
 
   const navPrice = nav ? Number(nav) / 1e6 : 0;
   const marketPrice = impliedPrice ? Number(impliedPrice) / 1e6 : 0;
@@ -37,6 +38,44 @@ export function PoolDashboard() {
       ? "var(--accent-yellow)"
       : "var(--accent-red)";
 
+  // Oracle countdown timer — ticks every second
+  const [secondsSince, setSecondsSince] = useState(0);
+  useEffect(() => {
+    const tick = () => {
+      setSecondsSince(timestamp ? Math.floor(Date.now() / 1000) - Number(timestamp) : 0);
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [timestamp]);
+  const nextUpdateIn = Math.max(0, 60 - (secondsSince % 60));
+  const lastUpdatedText =
+    secondsSince === 0 ? "just now"
+    : secondsSince < 60 ? `${secondsSince}s ago`
+    : `${Math.floor(secondsSince / 60)}m ago`;
+
+  // Price change tracking (compared to previous oracle update)
+  const prevNavRef = useRef<number>(0);
+  const [navChangePct, setNavChangePct] = useState<number | null>(null);
+  useEffect(() => {
+    if (nav) {
+      const cur = Number(nav) / 1e6;
+      if (prevNavRef.current > 0 && cur !== prevNavRef.current) {
+        setNavChangePct(((cur - prevNavRef.current) / prevNavRef.current) * 100);
+      }
+      prevNavRef.current = cur;
+    }
+  }, [nav]);
+
+  // Market health badge
+  const healthBadge =
+    reservePercent >= 99
+      ? { label: "Healthy", color: "#00CC88", bg: "rgba(0,204,136,0.1)" }
+      : reservePercent >= 98
+      ? { label: "Warning", color: "#F59E0B", bg: "rgba(245,158,11,0.1)" }
+      : { label: "Risk", color: "#EF4444", bg: "rgba(239,68,68,0.1)" };
+  const healthEmoji = reservePercent >= 99 ? "🟢" : reservePercent >= 98 ? "🟡" : "🔴";
+
   return (
     <div className="max-w-6xl mx-auto space-y-6">
       {/* Circuit Breaker Alert */}
@@ -61,34 +100,40 @@ export function PoolDashboard() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          icon={<DollarSign size={18} />}
-          label="Total Value Locked"
-          value={`$${tvl.toLocaleString("en-US", { maximumFractionDigits: 0 })}`}
-          color="#00CC88"
-          bgColor="rgba(0, 204, 136, 0.10)"
-        />
-        <StatCard
-          icon={<Activity size={18} />}
-          label="24h Volume"
-          value={`$${totalVolume ? formatUSDC(totalVolume) : "0.00"}`}
-          color="#00A3FF"
-          bgColor="rgba(0, 163, 255, 0.10)"
-        />
-        <StatCard
-          icon={<BarChart3 size={18} />}
-          label="Total Swaps"
-          value={swapCount?.toString() || "0"}
-          color="#8B5CF6"
-          bgColor="rgba(139, 92, 246, 0.10)"
-        />
-        <StatCard
-          icon={<Shield size={18} />}
-          label="Total Fees"
-          value={`$${totalFees ? formatUSDC(totalFees) : "0.00"}`}
-          color="var(--accent-yellow)"
-          bgColor="rgba(245, 158, 11, 0.10)"
-        />
+        {isLoading && !poolState ? (
+          Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
+        ) : (
+          <>
+            <StatCard
+              icon={<DollarSign size={18} />}
+              label="Total Value Locked"
+              value={`$${tvl.toLocaleString("en-US", { maximumFractionDigits: 0 })}`}
+              color="#00CC88"
+              bgColor="rgba(0, 204, 136, 0.10)"
+            />
+            <StatCard
+              icon={<Activity size={18} />}
+              label="24h Volume"
+              value={`$${totalVolume ? formatUSDC(totalVolume) : "0.00"}`}
+              color="#00A3FF"
+              bgColor="rgba(0, 163, 255, 0.10)"
+            />
+            <StatCard
+              icon={<BarChart3 size={18} />}
+              label="Total Swaps"
+              value={swapCount?.toString() || "0"}
+              color="#8B5CF6"
+              bgColor="rgba(139, 92, 246, 0.10)"
+            />
+            <StatCard
+              icon={<Shield size={18} />}
+              label="Total Fees"
+              value={`$${totalFees ? formatUSDC(totalFees) : "0.00"}`}
+              color="var(--accent-yellow)"
+              bgColor="rgba(245, 158, 11, 0.10)"
+            />
+          </>
+        )}
       </div>
 
       {/* Chart + Side cards */}
@@ -114,20 +159,27 @@ export function PoolDashboard() {
                 Real-time price comparison
               </p>
             </div>
-            <div style={{
-              display: "flex", alignItems: "center", gap: 6,
-              padding: "4px 10px", borderRadius: 9999,
-              background: "rgba(0, 204, 136, 0.08)",
-              border: "1px solid rgba(0, 204, 136, 0.2)",
-              fontSize: 11, fontWeight: 700,
-              color: "#00CC88", letterSpacing: "0.5px",
-            }}>
-              <span style={{
-                width: 6, height: 6, borderRadius: "50%",
-                background: "#00CC88", display: "inline-block",
-                animation: "pulse 2s infinite",
-              }} />
-              LIVE
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+              <div style={{
+                display: "flex", alignItems: "center", gap: 6,
+                padding: "4px 10px", borderRadius: 9999,
+                background: "rgba(0, 204, 136, 0.08)",
+                border: "1px solid rgba(0, 204, 136, 0.2)",
+                fontSize: 11, fontWeight: 700,
+                color: "#00CC88", letterSpacing: "0.5px",
+              }}>
+                <span style={{
+                  width: 6, height: 6, borderRadius: "50%",
+                  background: "#00CC88", display: "inline-block",
+                  animation: "pulse 2s infinite",
+                }} />
+                LIVE
+              </div>
+              {timestamp && (
+                <span style={{ fontSize: 10, color: "var(--text-muted)", fontWeight: 500 }}>
+                  Next update in {nextUpdateIn}s
+                </span>
+              )}
             </div>
           </div>
           <NAVChart history={history} />
@@ -142,13 +194,37 @@ export function PoolDashboard() {
             borderRadius: 16, padding: "20px 24px",
             boxShadow: "var(--card-shadow)",
           }}>
-            <h3 style={{
-              fontSize: 11, fontWeight: 700, letterSpacing: "0.5px",
-              textTransform: "uppercase", color: "var(--text-muted)", margin: "0 0 16px",
-            }}>
-              Price Information
-            </h3>
-            <PriceRow label="Oracle NAV" value={formatNAV(nav || BigInt(0))} />
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+              <h3 style={{
+                fontSize: 11, fontWeight: 700, letterSpacing: "0.5px",
+                textTransform: "uppercase", color: "var(--text-muted)", margin: 0,
+              }}>
+                Price Information
+              </h3>
+              {timestamp && (
+                <span style={{ fontSize: 10, color: "var(--text-muted)", fontWeight: 500 }}>
+                  Updated {lastUpdatedText}
+                </span>
+              )}
+            </div>
+            <PriceRow
+              label="Oracle NAV"
+              value={
+                <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                  {formatNAV(nav || BigInt(0))}
+                  {navChangePct !== null && (
+                    <span style={{
+                      fontSize: 10, fontWeight: 700,
+                      display: "flex", alignItems: "center", gap: 1,
+                      color: navChangePct >= 0 ? "var(--accent-green)" : "var(--accent-red)",
+                    }}>
+                      {navChangePct >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
+                      {navChangePct >= 0 ? "+" : ""}{navChangePct.toFixed(3)}%
+                    </span>
+                  )}
+                </span>
+              }
+            />
             <PriceRow label="Market Price" value={`$${marketPrice.toFixed(2)}`} />
             <PriceRow
               label="Deviation"
@@ -184,13 +260,26 @@ export function PoolDashboard() {
             </h3>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
               <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>Reserve Ratio</span>
-              <span style={{
-                fontSize: 20, fontWeight: 700,
-                fontFamily: "'Roboto Mono', monospace",
-                color: healthColor,
-              }}>
-                {reservePercent.toFixed(1)}%
-              </span>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+                <span style={{
+                  fontSize: 20, fontWeight: 700,
+                  fontFamily: "'Roboto Mono', monospace",
+                  color: healthColor,
+                }}>
+                  {reservePercent.toFixed(1)}%
+                </span>
+                {reservePercent > 0 && (
+                  <span style={{
+                    fontSize: 10, fontWeight: 700,
+                    padding: "2px 8px", borderRadius: 9999,
+                    background: healthBadge.bg,
+                    color: healthBadge.color,
+                    letterSpacing: "0.3px",
+                  }}>
+                    {healthEmoji} {healthBadge.label}
+                  </span>
+                )}
+              </div>
             </div>
             <div style={{
               height: 8, borderRadius: 100,
@@ -248,6 +337,25 @@ export function PoolDashboard() {
             />
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function SkeletonCard() {
+  return (
+    <div
+      style={{
+        background: "var(--bg-surface)",
+        border: "1px solid var(--border)",
+        borderRadius: 16, padding: "20px 24px",
+        boxShadow: "var(--card-shadow)",
+      }}
+    >
+      <div className="animate-pulse" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ width: 36, height: 36, borderRadius: 10, background: "var(--bg-input)" }} />
+        <div style={{ height: 10, borderRadius: 6, background: "var(--bg-input)", width: "55%" }} />
+        <div style={{ height: 22, borderRadius: 6, background: "var(--bg-input)", width: "75%" }} />
       </div>
     </div>
   );
@@ -321,7 +429,7 @@ function PriceRow({
   label, value, valueColor, last,
 }: {
   label: string;
-  value: string;
+  value: React.ReactNode;
   valueColor?: string;
   last?: boolean;
 }) {

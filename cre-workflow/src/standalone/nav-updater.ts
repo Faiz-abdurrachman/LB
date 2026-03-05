@@ -26,15 +26,18 @@ import { privateKeyToAccount } from "viem/accounts";
 const CONFIG = {
   chain: baseSepolia,
   rpcUrl: "https://sepolia.base.org",
-  navOracleAddress: "0x74ec721De6164Cc203FEa1EcFA2670896C47A90C" as Hex,
-  poolAddress: "0x61d60590b5a47628D895F71e072BFA531189Da7F" as Hex,
+
+  navOracleAddress: "0xA3A7Fe2eeA6EAa448a7445864f644912A3179a46" as Hex,
+  poolAddress: "0xa3Bb7547b13A3712fDB35A8cFFe283Db4526ef7C" as Hex,
+
   privateKey: (() => {
     const key = process.env.PRIVATE_KEY;
     if (!key) throw new Error("PRIVATE_KEY environment variable is required. Set it in .env file.");
     return key as Hex;
   })(),
-  updateIntervalMs: 60_000, // 60 seconds
-  initialNAV: 100.0, // $100.00
+
+  updateIntervalMs: 60_000,
+  initialNAV: 100.0,
 };
 
 const NAV_ORACLE_ABI = parseAbi([

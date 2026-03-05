@@ -21,16 +21,19 @@ export function NAVChart({ history }: { history: NAVHistoryPoint[] }) {
   if (history.length === 0) {
     return (
       <div
+        className="animate-pulse"
         style={{
           height: 280,
+          borderRadius: 8,
+          background: "var(--bg-input)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           fontSize: 13,
-          color: "var(--text-secondary)",
+          color: "var(--text-muted)",
         }}
       >
-        Waiting for NAV data...
+        Loading chart data...
       </div>
     );
   }
@@ -44,6 +47,13 @@ export function NAVChart({ history }: { history: NAVHistoryPoint[] }) {
     time: new Date(point.timestamp * 1000).toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
+    }),
+    fullTime: new Date(point.timestamp * 1000).toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
     }),
     nav: point.nav,
   }));
@@ -78,8 +88,11 @@ export function NAVChart({ history }: { history: NAVHistoryPoint[] }) {
               boxShadow: "var(--card-shadow)",
               color: "var(--text-primary)",
             }}
-            labelStyle={{ color: "var(--text-muted)" }}
-            formatter={(value) => [`$${Number(value).toFixed(4)}`, "NAV"]}
+            labelStyle={{ color: "var(--text-muted)", marginBottom: 4 }}
+            formatter={(value) => [`$${Number(value).toFixed(4)}`, "NAV Price"]}
+            labelFormatter={(_label, payload) =>
+              (payload?.[0]?.payload as { fullTime?: string })?.fullTime || _label
+            }
           />
           <ReferenceLine
             y={upperBound}
@@ -96,6 +109,7 @@ export function NAVChart({ history }: { history: NAVHistoryPoint[] }) {
             label={{ value: "Lower", position: "right", fill: "var(--accent-yellow)", fontSize: 10 }}
           />
           <Line
+            key={history[history.length - 1]?.timestamp}
             type="monotone"
             dataKey="nav"
             stroke="#00A3FF"
@@ -103,6 +117,9 @@ export function NAVChart({ history }: { history: NAVHistoryPoint[] }) {
             dot={false}
             name="NAV Price"
             activeDot={{ r: 4, fill: "#00A3FF", stroke: "var(--bg-surface)", strokeWidth: 2 }}
+            isAnimationActive={true}
+            animationDuration={600}
+            animationEasing="ease-out"
           />
         </LineChart>
       </ResponsiveContainer>
