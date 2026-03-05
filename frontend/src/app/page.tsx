@@ -52,123 +52,122 @@ const FEATURES = [
   },
 ];
 
-const STATS = [
-  { label: "Fund NAV", value: "~$100.00", sub: "per BUIDL token" },
-  { label: "Slippage Protection", value: "±0.5%", sub: "max deviation" },
-  { label: "Platform Fee", value: "0.05%", sub: "minimum fee" },
-  { label: "Oracle Network", value: "Chainlink", sub: "price feeds" },
-];
-
 export default function LandingPage() {
   return (
     <div className="page-enter" style={{ margin: "0 -16px" }}>
 
-      {/* ── HERO ── */}
-      <section style={{
-        textAlign: "center",
-        paddingTop: 80,
-        paddingBottom: 64,
-        position: "relative",
-        overflow: "hidden",
+      {/* ── HERO — split layout ── */}
+      <section className="hero-split" style={{
+        minHeight: "90vh",
+        display: "flex",
+        alignItems: "center",
+        padding: "80px 64px 60px",
+        maxWidth: 1200,
+        margin: "0 auto",
+        gap: 60,
       }}>
-        {/* Atmospheric glow */}
-        <div style={{
-          position: "absolute",
-          top: 0, left: "50%",
-          transform: "translateX(-50%)",
-          width: "80%",
-          height: "100%",
-          background: "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,163,255,0.08) 0%, rgba(0,204,136,0.04) 50%, transparent 75%)",
-          pointerEvents: "none",
-        }} />
 
-        <div style={{ position: "relative", maxWidth: 680, margin: "0 auto", padding: "0 24px" }}>
-          {/* Badge */}
+        {/* LEFT — text */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+
+          {/* Status pill */}
           <div style={{
-            display: "inline-flex", alignItems: "center", gap: 8,
-            padding: "6px 14px",
-            borderRadius: 9999,
-            background: "rgba(0, 163, 255, 0.08)",
-            border: "1px solid rgba(0, 163, 255, 0.2)",
-            marginBottom: 28,
+            display: "inline-flex", alignItems: "center", gap: 7,
+            padding: "5px 14px", borderRadius: 9999,
+            background: "rgba(0, 214, 143, 0.08)",
+            border: "1px solid rgba(0, 214, 143, 0.2)",
+            fontSize: 12, fontWeight: 600, color: "#00CC88",
+            marginBottom: 28, letterSpacing: "0.2px",
           }}>
             <span style={{
-              width: 7, height: 7, borderRadius: "50%",
-              background: "#00A3FF", display: "inline-block",
-              animation: "pulse 2s ease infinite",
+              width: 6, height: 6, borderRadius: "50%",
+              background: "#00CC88",
+              boxShadow: "0 0 8px rgba(0,204,136,0.6)",
+              animation: "pulse 2s infinite",
+              flexShrink: 0, display: "inline-block",
             }} />
-            <span style={{ fontSize: 12, fontWeight: 700, color: "var(--accent-blue)", letterSpacing: "0.5px" }}>
-              Live on Base Sepolia
-            </span>
+            Live on Base Sepolia · Powered by Chainlink
           </div>
 
+          {/* Headline */}
           <h1 style={{
-            fontFamily: "'Manrope', sans-serif",
-            fontSize: "clamp(40px, 6vw, 64px)",
-            fontWeight: 800,
+            fontSize: "clamp(40px, 5vw, 68px)",
+            fontWeight: 900,
             color: "var(--text-primary)",
-            letterSpacing: "-1.5px",
+            letterSpacing: "-2px",
             lineHeight: 1.05,
             margin: "0 0 20px",
+            fontFamily: "'Manrope', sans-serif",
           }}>
             Trade Tokenized<br />
-            <span style={{ color: "var(--accent-blue)" }}>Real-World Assets</span>
+            <span style={{
+              color: "transparent",
+              backgroundImage: "linear-gradient(135deg, #00A3FF 0%, #00CC88 100%)",
+              WebkitBackgroundClip: "text",
+              backgroundClip: "text",
+            }}>
+              Real-World Assets.
+            </span>
           </h1>
 
+          {/* Subtitle */}
           <p style={{
-            fontSize: 18,
-            fontWeight: 400,
+            fontSize: 17, fontWeight: 400,
             color: "var(--text-secondary)",
-            lineHeight: 1.6,
-            margin: "0 auto 40px",
-            maxWidth: 500,
+            lineHeight: 1.65,
+            margin: "0 0 36px",
+            maxWidth: 460,
           }}>
             Buy and sell BlackRock BUIDL tokens at the exact fund NAV.
             Powered by Chainlink oracles. No slippage. No surprises.
           </p>
 
           {/* CTAs */}
-          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: 12, marginBottom: 48, flexWrap: "wrap" }}>
             <Link href="/trade" style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
-              padding: "14px 28px",
-              borderRadius: 12,
-              background: "var(--accent-blue)",
-              color: "white",
+              padding: "14px 32px", borderRadius: 9999,
+              background: "#00A3FF", color: "white",
               fontSize: 15, fontWeight: 700,
               textDecoration: "none",
-              letterSpacing: "-0.2px",
-              boxShadow: "0 4px 20px rgba(0,163,255,0.35)",
+              boxShadow: "0 4px 20px rgba(0,163,255,0.30)",
+              display: "flex", alignItems: "center", gap: 7,
               transition: "transform 0.15s, box-shadow 0.15s",
+              fontFamily: "'Manrope', sans-serif",
             }}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)";
-                (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 28px rgba(0,163,255,0.45)";
+                (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 28px rgba(0,163,255,0.40)";
               }}
               onMouseLeave={(e) => {
                 (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
-                (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 20px rgba(0,163,255,0.35)";
+                (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 20px rgba(0,163,255,0.30)";
               }}
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
               </svg>
               Start Trading
             </Link>
 
             <Link href="/pool" style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
-              padding: "14px 28px",
-              borderRadius: 12,
-              background: "var(--bg-surface)",
-              border: "1px solid var(--border-strong)",
+              padding: "14px 28px", borderRadius: 9999,
+              background: "transparent",
               color: "var(--text-primary)",
               fontSize: 15, fontWeight: 600,
               textDecoration: "none",
-              letterSpacing: "-0.2px",
-              boxShadow: "var(--card-shadow)",
-            }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              border: "1.5px solid var(--border-strong)",
+              display: "flex", alignItems: "center", gap: 7,
+              transition: "background 0.15s",
+              fontFamily: "'Manrope', sans-serif",
+            }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.background = "var(--bg-input)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.background = "transparent";
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 <line x1="18" y1="20" x2="18" y2="10" />
                 <line x1="12" y1="20" x2="12" y2="4" />
                 <line x1="6" y1="20" x2="6" y2="14" />
@@ -176,44 +175,72 @@ export default function LandingPage() {
               View Markets
             </Link>
           </div>
-        </div>
-      </section>
 
-      {/* ── STATS BAR ── */}
-      <section style={{ maxWidth: 780, margin: "0 auto 64px", padding: "0 24px" }}>
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: 1,
-          background: "var(--border)",
-          borderRadius: 16,
-          overflow: "hidden",
-          boxShadow: "var(--card-shadow)",
-        }}>
-          {STATS.map((s, i) => (
-            <div key={i} style={{
-              background: "var(--bg-surface)",
-              padding: "20px 24px",
-              textAlign: "center",
-            }}>
-              <div style={{
-                fontFamily: "'Roboto Mono', monospace",
-                fontSize: 20, fontWeight: 700,
-                color: "var(--text-primary)",
-                letterSpacing: "-0.5px",
-                marginBottom: 4,
+          {/* Stats row */}
+          <div style={{ display: "flex", flexWrap: "wrap" }}>
+            {[
+              { value: "~$100", label: "Fund NAV" },
+              { value: "±0.5%", label: "Slippage Protection" },
+              { value: "0.05%", label: "Platform Fee" },
+              { value: "Chainlink", label: "Oracle Network" },
+            ].map((stat, i) => (
+              <div key={i} style={{
+                paddingRight: 28,
+                marginRight: 28,
+                borderRight: i < 3 ? "1px solid var(--border)" : "none",
+                marginBottom: 12,
               }}>
-                {s.value}
+                <div style={{
+                  fontSize: 20, fontWeight: 700,
+                  fontFamily: "'Roboto Mono', monospace",
+                  color: "var(--text-primary)", letterSpacing: "-0.5px",
+                }}>
+                  {stat.value}
+                </div>
+                <div style={{
+                  fontSize: 11, fontWeight: 600,
+                  color: "var(--text-muted)", textTransform: "uppercase",
+                  letterSpacing: "0.5px", marginTop: 2,
+                }}>
+                  {stat.label}
+                </div>
               </div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 2 }}>
-                {s.label}
-              </div>
-              <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 400 }}>
-                {s.sub}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
+
+        {/* RIGHT — large logo visual */}
+        <div className="logo-side" style={{
+          flex: "0 0 420px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          position: "relative",
+        }}>
+          {/* Ambient glow */}
+          <div style={{
+            position: "absolute",
+            width: 380, height: 380,
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(0,163,255,0.12) 0%, rgba(0,204,136,0.08) 40%, transparent 70%)",
+            filter: "blur(40px)",
+            pointerEvents: "none",
+          }} />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/LogoLiquidBridgeTransparan.png"
+            alt="LiquidBridge"
+            style={{
+              width: 380, height: 380,
+              objectFit: "contain",
+              position: "relative",
+              zIndex: 1,
+              filter: "drop-shadow(0 20px 60px rgba(0,163,255,0.15)) drop-shadow(0 0 40px rgba(0,204,136,0.10))",
+              animation: "logoFloat 4s ease-in-out infinite",
+            }}
+          />
+        </div>
+
       </section>
 
       {/* ── FEATURES ── */}
@@ -230,11 +257,7 @@ export default function LandingPage() {
           The infrastructure that makes DeFi RWA trading safe and transparent.
         </p>
 
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(2, 1fr)",
-          gap: 14,
-        }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 14 }}>
           {FEATURES.map((f, i) => (
             <div key={i} style={{
               background: "var(--bg-surface)",
@@ -246,18 +269,14 @@ export default function LandingPage() {
               position: "relative",
               overflow: "hidden",
             }}>
-              {/* Glow orb */}
               <div style={{
                 position: "absolute", top: -20, right: -20,
                 width: 80, height: 80, borderRadius: "50%",
-                background: f.bgColor,
-                filter: "blur(24px)",
-                pointerEvents: "none",
+                background: f.bgColor, filter: "blur(24px)", pointerEvents: "none",
               }} />
               <div style={{
                 width: 44, height: 44, borderRadius: 12,
-                background: f.bgColor,
-                color: f.color,
+                background: f.bgColor, color: f.color,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 marginBottom: 16,
               }}>
@@ -275,9 +294,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── CTA FOOTER ── */}
-      <section style={{
-        maxWidth: 780, margin: "0 auto 48px", padding: "0 24px",
-      }}>
+      <section style={{ maxWidth: 780, margin: "0 auto 48px", padding: "0 24px" }}>
         <div style={{
           background: "var(--bg-surface)",
           border: "1px solid var(--border)",
@@ -288,7 +305,6 @@ export default function LandingPage() {
           overflow: "hidden",
           boxShadow: "var(--card-shadow)",
         }}>
-          {/* Accent top line */}
           <div style={{
             position: "absolute", top: 0, left: 0, right: 0, height: 3,
             background: "linear-gradient(90deg, #00A3FF, #00CC88)",
@@ -300,12 +316,7 @@ export default function LandingPage() {
             pointerEvents: "none",
           }} />
 
-          <h2 style={{
-            fontSize: 28, fontWeight: 800,
-            color: "var(--text-primary)",
-            letterSpacing: "-0.6px",
-            marginBottom: 12,
-          }}>
+          <h2 style={{ fontSize: 28, fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.6px", marginBottom: 12 }}>
             Ready to trade?
           </h2>
           <p style={{ fontSize: 15, color: "var(--text-secondary)", marginBottom: 28 }}>
@@ -314,24 +325,18 @@ export default function LandingPage() {
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
             <Link href="/trade" style={{
               display: "inline-flex", alignItems: "center", gap: 8,
-              padding: "13px 28px",
-              borderRadius: 12,
-              background: "var(--accent-blue)",
-              color: "white",
-              fontSize: 14, fontWeight: 700,
-              textDecoration: "none",
+              padding: "13px 28px", borderRadius: 12,
+              background: "var(--accent-blue)", color: "white",
+              fontSize: 14, fontWeight: 700, textDecoration: "none",
               boxShadow: "0 4px 16px rgba(0,163,255,0.3)",
             }}>
               Open Trade App
             </Link>
             <Link href="/portfolio" style={{
               display: "inline-flex", alignItems: "center", gap: 8,
-              padding: "13px 28px",
-              borderRadius: 12,
-              background: "var(--bg-input)",
-              border: "1px solid var(--border)",
-              color: "var(--text-primary)",
-              fontSize: 14, fontWeight: 600,
+              padding: "13px 28px", borderRadius: 12,
+              background: "var(--bg-input)", border: "1px solid var(--border)",
+              color: "var(--text-primary)", fontSize: 14, fontWeight: 600,
               textDecoration: "none",
             }}>
               Get Test Tokens
