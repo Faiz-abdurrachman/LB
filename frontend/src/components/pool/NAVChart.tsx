@@ -23,7 +23,7 @@ export function NAVChart({ history }: { history: NAVHistoryPoint[] }) {
       <div
         className="animate-pulse"
         style={{
-          height: 280,
+          height: "100%", minHeight: 260,
           borderRadius: 8,
           background: "var(--bg-input)",
           display: "flex",
@@ -62,8 +62,8 @@ export function NAVChart({ history }: { history: NAVHistoryPoint[] }) {
   const maxY = Math.max(...history.map((p) => p.nav)) * 1.002;
 
   return (
-    <div style={{ height: 280 }}>
-      <ResponsiveContainer width="100%" height="100%">
+    <div style={{ height: "100%", minHeight: 260 }}>
+      <ResponsiveContainer width="100%" height="100%" minHeight={260}>
         <LineChart data={chartData} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
           <XAxis

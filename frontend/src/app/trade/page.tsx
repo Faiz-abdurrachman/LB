@@ -70,7 +70,7 @@ export default function TradePage() {
   return (
     <div className="page-enter">
       {/* Hero + SwapCard */}
-      <div className="max-w-[520px] mx-auto">
+      <div className="max-w-[560px] mx-auto">
         <div className="text-center trade-hero" style={{
           paddingTop: 48,
           paddingBottom: 40,
@@ -122,6 +122,7 @@ export default function TradePage() {
           maxWidth: 680,
           margin: "0 auto",
           padding: "0 16px",
+          alignItems: "stretch",
         }}>
           {STEPS.map((s) => (
             <div
@@ -134,6 +135,8 @@ export default function TradePage() {
                 boxShadow: "var(--card-shadow)",
                 textAlign: "left",
                 cursor: "default",
+                display: "flex",
+                flexDirection: "column",
               }}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLElement).style.transform = "translateY(-3px)";
@@ -145,7 +148,7 @@ export default function TradePage() {
               }}
             >
               <div style={{
-                width: 40, height: 40, borderRadius: 10,
+                width: 44, height: 44, borderRadius: 12,
                 background: s.bgColor,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 color: s.color, marginBottom: 14,
@@ -167,7 +170,7 @@ export default function TradePage() {
               }}>
                 {s.title}
               </div>
-              <div style={{ fontSize: 13, fontWeight: 400, color: "var(--text-secondary)", lineHeight: 1.65 }}>
+              <div style={{ fontSize: 13, fontWeight: 400, color: "var(--text-secondary)", lineHeight: 1.65, flex: 1 }}>
                 {s.desc}
               </div>
             </div>

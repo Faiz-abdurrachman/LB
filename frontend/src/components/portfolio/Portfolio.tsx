@@ -27,6 +27,14 @@ export function Portfolio() {
   const rwaValue = rwaBalance ? (Number(rwaBalance) / 1e18) * navPrice : 0;
   const totalValue = usdcValue + rwaValue;
 
+  const formatCompact = (val: string) => {
+    const num = parseFloat(val.replace(/,/g, ""));
+    if (isNaN(num)) return val;
+    if (num >= 1_000_000) return (num / 1_000_000).toFixed(2) + "M";
+    if (num >= 1_000) return (num / 1_000).toFixed(1) + "K";
+    return num.toFixed(2);
+  };
+
   // suppress unused
   void formatNAV;
   void address;
@@ -76,13 +84,14 @@ export function Portfolio() {
             label: "mBUILD Balance",
             value: rwaBalance ? formatRWA(rwaBalance) : "—",
             prefix: "",
-            color: "#6366F1",
-            bgColor: "rgba(99, 102, 241, 0.08)",
+            color: "#1E3A5F",
+            bgColor: "rgba(30, 58, 95, 0.12)",
             letter: "B",
+            letterColor: "white" as const,
           },
           {
             label: "LP Position",
-            value: lpBalance && lpBalance > BigInt(0) ? formatRWA(lpBalance) : "—",
+            value: lpBalance && lpBalance > BigInt(0) ? formatCompact(formatRWA(lpBalance)) : "—",
             prefix: "",
             color: "#00A3FF",
             bgColor: "rgba(0, 163, 255, 0.08)",
@@ -122,7 +131,7 @@ export function Portfolio() {
               width: 30, height: 30,
               borderRadius: 8,
               background: stat.bgColor,
-              color: stat.color,
+              color: ("letterColor" in stat ? stat.letterColor : undefined) || stat.color,
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 11, fontWeight: 800,
               marginBottom: 10,
@@ -152,7 +161,7 @@ export function Portfolio() {
         ))}
       </div>
 
-      {/* FIX 2 — Hero card (theme-aware) */}
+      {/* Portfolio value card — theme-aware */}
       <div style={{
         background: "var(--bg-surface)",
         border: "1px solid var(--border)",
@@ -275,8 +284,8 @@ export function Portfolio() {
             style={{
               padding: 11,
               borderRadius: 10,
-              border: "1.5px solid rgba(39, 117, 202, 0.3)",
-              background: "rgba(39, 117, 202, 0.06)",
+              border: "1.5px solid rgba(39, 117, 202, 0.20)",
+              background: "rgba(39, 117, 202, 0.07)",
               color: "#2775CA",
               fontSize: 13, fontWeight: 700,
               cursor: usdcPending || usdcConfirming ? "not-allowed" : "pointer",
@@ -284,6 +293,16 @@ export function Portfolio() {
               transition: "all 0.15s",
               fontFamily: "'Manrope', sans-serif",
               opacity: usdcPending || usdcConfirming ? 0.6 : 1,
+            }}
+            onMouseEnter={(e) => {
+              if (!usdcPending && !usdcConfirming) {
+                (e.currentTarget as HTMLElement).style.background = "rgba(39, 117, 202, 0.13)";
+                (e.currentTarget as HTMLElement).style.borderColor = "rgba(39, 117, 202, 0.35)";
+              }
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.background = "rgba(39, 117, 202, 0.07)";
+              (e.currentTarget as HTMLElement).style.borderColor = "rgba(39, 117, 202, 0.20)";
             }}
           >
             {(usdcPending || usdcConfirming) ? (
@@ -305,8 +324,8 @@ export function Portfolio() {
             style={{
               padding: 11,
               borderRadius: 10,
-              border: "1.5px solid rgba(0, 163, 255, 0.3)",
-              background: "rgba(0, 163, 255, 0.06)",
+              border: "1.5px solid rgba(0, 163, 255, 0.20)",
+              background: "rgba(0, 163, 255, 0.07)",
               color: "var(--accent)",
               fontSize: 13, fontWeight: 700,
               cursor: rwaPending || rwaConfirming ? "not-allowed" : "pointer",
@@ -314,6 +333,16 @@ export function Portfolio() {
               transition: "all 0.15s",
               fontFamily: "'Manrope', sans-serif",
               opacity: rwaPending || rwaConfirming ? 0.6 : 1,
+            }}
+            onMouseEnter={(e) => {
+              if (!rwaPending && !rwaConfirming) {
+                (e.currentTarget as HTMLElement).style.background = "rgba(0, 163, 255, 0.13)";
+                (e.currentTarget as HTMLElement).style.borderColor = "rgba(0, 163, 255, 0.35)";
+              }
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.background = "rgba(0, 163, 255, 0.07)";
+              (e.currentTarget as HTMLElement).style.borderColor = "rgba(0, 163, 255, 0.20)";
             }}
           >
             {(rwaPending || rwaConfirming) ? (
@@ -410,7 +439,7 @@ export function Portfolio() {
           },
           {
             symbol: "mBUILD", name: "Mock BUIDL Token",
-            letter: "B", letterBg: "#6366F1",
+            letter: "B", letterBg: "#1E3A5F",
             amount: rwaBalance ? formatRWA(rwaBalance) : "0.0000",
             usd: `$${rwaValue.toFixed(2)}`,
             positive: rwaValue > 0,

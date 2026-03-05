@@ -126,11 +126,12 @@ export function SwapCard() {
     <div className="w-full">
       {/* Main card */}
       <div
-        className="rounded-2xl overflow-hidden"
         style={{
           background: "var(--bg-surface)",
           border: "1px solid var(--border)",
+          borderRadius: 20,
           boxShadow: "var(--card-shadow)",
+          overflow: "hidden",
         }}
       >
         {/* Buy / Sell tab toggle */}
@@ -160,33 +161,41 @@ export function SwapCard() {
             </div>
           )}
           <div
-            className="flex p-1 rounded-full gap-1"
-            style={{ background: "var(--surface-secondary)" }}
+            className="flex gap-1"
+            style={{ background: "var(--bg-input)", borderRadius: 12, padding: 4 }}
           >
             <button
               onClick={() => { setTab("buy"); setInputAmount(""); }}
-              className="flex-1 py-2 rounded-full transition-all"
+              className="flex-1 transition-all"
               style={{
                 background: tab === "buy" ? "var(--bg-surface)" : "transparent",
-                color: tab === "buy" ? "var(--text-primary)" : "var(--text-secondary)",
-                boxShadow: tab === "buy" ? "var(--card-shadow)" : "none",
-                fontSize: 14,
+                color: tab === "buy" ? "var(--text-primary)" : "var(--text-muted)",
+                boxShadow: tab === "buy" ? "0 1px 4px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.5)" : "none",
+                fontSize: 13,
                 fontWeight: 700,
                 border: "none",
+                borderRadius: 9,
+                padding: "10px 0",
+                cursor: "pointer",
+                fontFamily: "'Manrope', sans-serif",
               }}
             >
               Buy BUIDL
             </button>
             <button
               onClick={() => { setTab("sell"); setInputAmount(""); }}
-              className="flex-1 py-2 rounded-full transition-all"
+              className="flex-1 transition-all"
               style={{
                 background: tab === "sell" ? "var(--bg-surface)" : "transparent",
-                color: tab === "sell" ? "var(--text-primary)" : "var(--text-secondary)",
-                boxShadow: tab === "sell" ? "var(--card-shadow)" : "none",
-                fontSize: 14,
+                color: tab === "sell" ? "var(--text-primary)" : "var(--text-muted)",
+                boxShadow: tab === "sell" ? "0 1px 4px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.5)" : "none",
+                fontSize: 13,
                 fontWeight: 700,
                 border: "none",
+                borderRadius: 9,
+                padding: "10px 0",
+                cursor: "pointer",
+                fontFamily: "'Manrope', sans-serif",
               }}
             >
               Sell BUIDL
@@ -199,8 +208,7 @@ export function SwapCard() {
           <div>
             <div className="flex justify-between items-center mb-2">
               <span
-                className="font-bold uppercase"
-                style={{ fontSize: 11, letterSpacing: "0.8px", color: "var(--text-secondary)" }}
+                style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.8px", textTransform: "uppercase", color: "var(--text-muted)" }}
               >
                 You Pay
               </span>
@@ -215,10 +223,11 @@ export function SwapCard() {
               )}
             </div>
             <div
-              className="flex items-center gap-3 px-4 rounded-xl transition-all"
+              className="flex items-center gap-3 transition-all"
               style={{
                 background: "var(--bg-input)",
                 border: "1.5px solid var(--border-strong)",
+                borderRadius: 14,
                 padding: "14px 16px",
               }}
               onFocus={(e) => {
@@ -262,14 +271,29 @@ export function SwapCard() {
           {/* Arrow */}
           <div className="flex justify-center">
             <div
-              className="rounded-full flex items-center justify-center"
+              className="flex items-center justify-center"
               style={{
-                width: 34,
-                height: 34,
+                width: 36,
+                height: 36,
+                borderRadius: 10,
                 background: "var(--bg-surface)",
                 border: "1.5px solid var(--border)",
-                color: "var(--text-secondary)",
+                color: "var(--text-muted)",
                 boxShadow: "var(--card-shadow)",
+                cursor: "default",
+                transition: "border-color 0.15s, color 0.15s, transform 0.2s",
+              }}
+              onMouseEnter={(e) => {
+                const el = e.currentTarget as HTMLElement;
+                el.style.borderColor = "var(--accent-blue)";
+                el.style.color = "var(--accent-blue)";
+                el.style.transform = "rotate(180deg)";
+              }}
+              onMouseLeave={(e) => {
+                const el = e.currentTarget as HTMLElement;
+                el.style.borderColor = "var(--border)";
+                el.style.color = "var(--text-muted)";
+                el.style.transform = "rotate(0deg)";
               }}
             >
               <ArrowDown size={14} strokeWidth={2.5} />
@@ -280,18 +304,18 @@ export function SwapCard() {
           <div>
             <div className="flex justify-between items-center mb-2">
               <span
-                className="font-bold uppercase"
-                style={{ fontSize: 11, letterSpacing: "0.8px", color: "var(--text-secondary)" }}
+                style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.8px", textTransform: "uppercase", color: "var(--text-muted)" }}
               >
                 You Receive
               </span>
               <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>Estimated</span>
             </div>
             <div
-              className="flex items-center gap-3 rounded-xl"
+              className="flex items-center gap-3"
               style={{
                 background: "var(--bg-input)",
                 border: "1.5px solid var(--border-strong)",
+                borderRadius: 14,
                 padding: "14px 16px",
               }}
             >
@@ -435,13 +459,17 @@ export function SwapCard() {
               disabled={isLoading}
               className="w-full font-bold flex items-center justify-center gap-2 transition-all hover:opacity-90"
               style={{
-                padding: "14px",
-                borderRadius: 10,
+                padding: "15px",
+                borderRadius: 12,
                 fontSize: 15,
                 background: "var(--accent-blue)",
                 color: "white",
                 border: "none",
                 marginTop: 16,
+                cursor: "pointer",
+                fontFamily: "'Manrope', sans-serif",
+                letterSpacing: "-0.2px",
+                boxShadow: "0 4px 16px rgba(0,163,255,0.25)",
               }}
             >
               {(isApproving || isApproveConfirming) && <Loader2 size={16} className="animate-spin" />}
@@ -451,15 +479,32 @@ export function SwapCard() {
             <button
               onClick={handleSwap}
               disabled={isLoading || !quoteResult}
-              className="w-full font-bold flex items-center justify-center gap-2 transition-all hover:opacity-90 disabled:opacity-60"
+              className="w-full font-bold flex items-center justify-center gap-2 disabled:opacity-60"
               style={{
-                padding: "14px",
-                borderRadius: 10,
+                padding: "15px",
+                borderRadius: 12,
                 fontSize: 15,
-                background: "var(--accent-blue)",
+                background: isBuy
+                  ? "var(--accent-blue)"
+                  : "linear-gradient(135deg, #EF4444, #DC2626)",
                 color: "white",
                 border: "none",
                 marginTop: 16,
+                cursor: "pointer",
+                fontFamily: "'Manrope', sans-serif",
+                letterSpacing: "-0.2px",
+                boxShadow: isBuy
+                  ? "0 4px 16px rgba(0,163,255,0.25)"
+                  : "0 4px 16px rgba(239,68,68,0.25)",
+                transition: "opacity 0.18s, transform 0.18s, box-shadow 0.18s",
+              }}
+              onMouseEnter={(e) => {
+                const el = e.currentTarget as HTMLElement;
+                if (!el.disabled) { el.style.opacity = "0.9"; el.style.transform = "translateY(-1px)"; }
+              }}
+              onMouseLeave={(e) => {
+                const el = e.currentTarget as HTMLElement;
+                el.style.opacity = "1"; el.style.transform = "translateY(0)";
               }}
             >
               {(isSwapping || isSwapConfirming) && <Loader2 size={16} className="animate-spin" />}

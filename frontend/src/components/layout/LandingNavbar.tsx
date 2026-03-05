@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 
 export function LandingNavbar() {
   const [isDark, setIsDark] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("theme") || "light";
@@ -17,7 +17,13 @@ export function LandingNavbar() {
     });
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
-    return () => observer.disconnect();
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
   const toggleTheme = () => {
@@ -36,12 +42,24 @@ export function LandingNavbar() {
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
-      background: "transparent",
-      borderBottom: "none",
+      background: scrolled
+        ? (isDark ? "rgba(10,14,26,0.88)" : "rgba(244,246,249,0.88)")
+        : "transparent",
+      backdropFilter: scrolled ? "blur(20px) saturate(180%)" : "none",
+      WebkitBackdropFilter: scrolled ? "blur(20px) saturate(180%)" : "none",
+      borderBottom: scrolled
+        ? (isDark ? "1px solid rgba(99,132,255,0.12)" : "1px solid rgba(0,0,0,0.06)")
+        : "1px solid transparent",
+      transition: "background 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease",
     }}>
       {/* Logo */}
       <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-        <Image src="/LogoLiquidBridgeTransparan.png" width={44} height={44} alt="LiquidBridge" />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/LogoLiquidBridgeTransparan.png"
+          alt="LiquidBridge"
+          style={{ width: 32, height: 32, objectFit: "contain", flexShrink: 0 }}
+        />
         <span style={{
           fontFamily: "'Manrope', sans-serif",
           fontSize: 18, fontWeight: 800,

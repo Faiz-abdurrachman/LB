@@ -70,11 +70,10 @@ export function PoolDashboard() {
   // Market health badge
   const healthBadge =
     reservePercent >= 99
-      ? { label: "Healthy", color: "#00CC88", bg: "rgba(0,204,136,0.1)" }
+      ? { label: "Healthy", color: "#00CC88", bg: "rgba(0,204,136,0.08)", border: "1px solid rgba(0,204,136,0.2)" }
       : reservePercent >= 98
-      ? { label: "Warning", color: "#F59E0B", bg: "rgba(245,158,11,0.1)" }
-      : { label: "Risk", color: "#EF4444", bg: "rgba(239,68,68,0.1)" };
-  const healthEmoji = reservePercent >= 99 ? "🟢" : reservePercent >= 98 ? "🟡" : "🔴";
+      ? { label: "Warning", color: "#F59E0B", bg: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)" }
+      : { label: "Risk", color: "#EF4444", bg: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)" };
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
@@ -147,10 +146,13 @@ export function PoolDashboard() {
             borderRadius: 16,
             padding: 24,
             boxShadow: "var(--card-shadow)",
+            display: "flex",
+            flexDirection: "column",
+            minHeight: 400,
           }}
         >
           {/* Chart header */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexShrink: 0 }}>
             <div>
               <h3 style={{ fontSize: 15, fontWeight: 700, color: "var(--text-primary)", margin: 0, letterSpacing: "-0.2px" }}>
                 NAV vs Market Price
@@ -176,13 +178,22 @@ export function PoolDashboard() {
                 LIVE
               </div>
               {timestamp && (
-                <span style={{ fontSize: 10, color: "var(--text-muted)", fontWeight: 500 }}>
+                <div style={{
+                  display: "flex", alignItems: "center", gap: 5,
+                  fontSize: 11, fontWeight: 600, color: "var(--text-muted)",
+                }}>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
                   Next update in {nextUpdateIn}s
-                </span>
+                </div>
               )}
             </div>
           </div>
-          <NAVChart history={history} />
+          <div style={{ flex: 1, minHeight: 260 }}>
+            <NAVChart history={history} />
+          </div>
         </div>
 
         {/* Right column */}
@@ -270,30 +281,37 @@ export function PoolDashboard() {
                 </span>
                 {reservePercent > 0 && (
                   <span style={{
-                    fontSize: 10, fontWeight: 700,
+                    display: "inline-flex", alignItems: "center", gap: 4,
+                    fontSize: 11, fontWeight: 700,
                     padding: "2px 8px", borderRadius: 9999,
                     background: healthBadge.bg,
+                    border: healthBadge.border,
                     color: healthBadge.color,
-                    letterSpacing: "0.3px",
                   }}>
-                    {healthEmoji} {healthBadge.label}
+                    <span style={{ width: 5, height: 5, borderRadius: "50%", background: healthBadge.color, flexShrink: 0 }} />
+                    {healthBadge.label}
                   </span>
                 )}
               </div>
             </div>
             <div style={{
-              height: 8, borderRadius: 100,
-              background: "var(--bg-input)",
-              overflow: "hidden",
+              borderRadius: 100,
+              boxShadow: reservePercent > 0 ? "0 0 10px rgba(0,204,136,0.35)" : "none",
+              transition: "box-shadow 1s ease",
             }}>
               <div style={{
-                height: "100%",
-                width: `${Math.min(reservePercent, 100)}%`,
-                borderRadius: 100,
-                background: "linear-gradient(90deg, #00CC88, #00E5A0)",
-                boxShadow: "0 0 12px rgba(0, 204, 136, 0.4)",
-                transition: "width 1s ease",
-              }} />
+                height: 8, borderRadius: 100,
+                background: "var(--bg-input)",
+                overflow: "hidden",
+              }}>
+                <div style={{
+                  height: "100%",
+                  width: `${Math.min(reservePercent, 100)}%`,
+                  borderRadius: 100,
+                  background: "linear-gradient(90deg, #00CC88, #00E5A0)",
+                  transition: "width 1s ease",
+                }} />
+              </div>
             </div>
             {isStale && (
               <div style={{
@@ -391,10 +409,10 @@ function StatCard({
     >
       {/* Background glow orb */}
       <div style={{
-        position: "absolute", top: -20, right: -20,
-        width: 80, height: 80, borderRadius: "50%",
-        background: bgColor, filter: "blur(24px)",
-        opacity: 0.6, pointerEvents: "none",
+        position: "absolute", top: -10, right: -10,
+        width: 100, height: 100, borderRadius: "50%",
+        background: color, filter: "blur(32px)",
+        opacity: 0.18, pointerEvents: "none",
       }} />
       {/* Icon */}
       <div style={{
@@ -415,9 +433,10 @@ function StatCard({
       {/* Value */}
       <div style={{
         fontFamily: "'Roboto Mono', monospace",
-        fontSize: 24, fontWeight: 600,
+        fontSize: "clamp(17px, 2.2vw, 24px)", fontWeight: 600,
         color: "var(--text-primary)",
         letterSpacing: "-0.5px", lineHeight: 1,
+        whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
       }}>
         {value}
       </div>

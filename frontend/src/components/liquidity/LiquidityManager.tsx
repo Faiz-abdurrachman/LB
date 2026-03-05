@@ -10,6 +10,8 @@ import {
 import { parseUnits, maxUint256 } from "viem";
 import { CONTRACTS, ABIS } from "@/lib/contracts";
 import { useTokenBalances } from "@/hooks/useTokenBalances";
+import { usePool } from "@/hooks/usePool";
+import { useNAV } from "@/hooks/useNAV";
 import { formatUSDC, formatRWA } from "@/lib/utils";
 import { Loader2, CheckCircle, AlertTriangle, ChevronDown } from "lucide-react";
 
@@ -22,6 +24,16 @@ export function LiquidityManager() {
   const [error, setError] = useState<string | null>(null);
   const [expanded, setExpanded] = useState(false);
   const { usdcBalance, rwaBalance, lpBalance, refetch } = useTokenBalances();
+  const { poolState } = usePool();
+  const { nav } = useNAV();
+
+  const navPrice = nav ? Number(nav) / 1e6 : 100;
+  const tvlValue = poolState
+    ? Number(poolState.reserveUSDC) / 1e6 + (Number(poolState.reserveRWA) / 1e18) * navPrice
+    : 0;
+  const tvlDisplay = tvlValue > 0
+    ? "$" + tvlValue.toLocaleString("en-US", { maximumFractionDigits: 0 })
+    : "—";
 
   const { data: rwaAllowance, refetch: refetchRwaAllowance } = useReadContract({
     address: CONTRACTS.mockRWAToken,
@@ -214,7 +226,7 @@ export function LiquidityManager() {
           borderBottom: "1px solid var(--border)",
         }}>
           {[
-            { label: "TVL", value: "—", sub: "Total Value Locked", highlight: false },
+            { label: "TVL", value: tvlDisplay, sub: "Total Value Locked", highlight: false },
             { label: "APY", value: "Variable", sub: "Based on volume", highlight: true },
             { label: "FEE TIER", value: "0.05%", sub: "Dynamic fee", highlight: false },
           ].map((stat, i) => (
@@ -566,7 +578,7 @@ function TokenInput({
       style={{
         background: "var(--bg-input)",
         border: "1.5px solid var(--border)",
-        borderRadius: 12, padding: "12px 14px",
+        borderRadius: 14, padding: "12px 14px",
         transition: "border-color 0.2s, box-shadow 0.2s",
       }}
       onFocus={(e) => {

@@ -6,6 +6,7 @@ const FEATURES = [
   {
     color: "#00A3FF",
     bgColor: "rgba(0, 163, 255, 0.08)",
+    glowColor: "rgba(0, 163, 255, 0.22)",
     title: "Real NAV Pricing",
     desc: "Trade at the exact fund NAV from BlackRock. No AMM slippage, no price manipulation.",
     icon: (
@@ -18,6 +19,7 @@ const FEATURES = [
   {
     color: "#00CC88",
     bgColor: "rgba(0, 204, 136, 0.08)",
+    glowColor: "rgba(0, 204, 136, 0.20)",
     title: "Chainlink Oracles",
     desc: "Price feeds secured by the industry-standard oracle network. Updated every 60 seconds.",
     icon: (
@@ -29,6 +31,7 @@ const FEATURES = [
   {
     color: "#6366F1",
     bgColor: "rgba(99, 102, 241, 0.08)",
+    glowColor: "rgba(99, 102, 241, 0.22)",
     title: "Earn Yield",
     desc: "Provide liquidity to the BUIDL/USDC pool and earn platform fees passively.",
     icon: (
@@ -41,6 +44,7 @@ const FEATURES = [
   {
     color: "#F59E0B",
     bgColor: "rgba(245, 158, 11, 0.08)",
+    glowColor: "rgba(245, 158, 11, 0.20)",
     title: "Compliant by Design",
     desc: "Built-in KYC verification and slippage protection. Institutional-grade DeFi.",
     icon: (
@@ -54,9 +58,16 @@ const FEATURES = [
 
 export default function LandingPage() {
   return (
-    <div className="page-enter" style={{ margin: "0 -16px" }}>
+    <div className="page-enter landing-page" style={{ margin: "0 -16px" }}>
 
-      {/* ── HERO — split layout ── */}
+      {/* ── HERO — full-width wrapper for smooth edge-to-edge atmosphere ── */}
+      <div style={{
+        background: `
+          radial-gradient(ellipse 70% 60% at 10% 50%, rgba(0,163,255,0.10), transparent 55%),
+          radial-gradient(ellipse 60% 50% at 90% 30%, rgba(0,204,136,0.07), transparent 55%)
+        `,
+        width: "100%",
+      }}>
       <section className="hero-split" style={{
         minHeight: "90vh",
         display: "flex",
@@ -177,30 +188,32 @@ export default function LandingPage() {
           </div>
 
           {/* Stats row */}
-          <div style={{ display: "flex", flexWrap: "wrap" }}>
+          <div className="hero-stats" style={{ display: "flex", flexWrap: "nowrap", alignItems: "center", marginTop: 40 }}>
             {[
               { value: "~$100", label: "Fund NAV" },
               { value: "±0.5%", label: "Slippage Protection" },
               { value: "0.05%", label: "Platform Fee" },
               { value: "Chainlink", label: "Oracle Network" },
-            ].map((stat, i) => (
+            ].map((stat, i, arr) => (
               <div key={i} style={{
-                paddingRight: 28,
-                marginRight: 28,
-                borderRight: i < 3 ? "1px solid var(--border)" : "none",
-                marginBottom: 12,
+                paddingRight: i < arr.length - 1 ? 24 : 0,
+                marginRight: i < arr.length - 1 ? 24 : 0,
+                borderRight: i < arr.length - 1 ? "1px solid var(--border)" : "none",
+                flexShrink: 0,
               }}>
                 <div style={{
-                  fontSize: 20, fontWeight: 700,
+                  fontSize: 17, fontWeight: 700,
                   fontFamily: "'Roboto Mono', monospace",
-                  color: "var(--text-primary)", letterSpacing: "-0.5px",
+                  color: "var(--text-primary)", letterSpacing: "-0.3px",
+                  whiteSpace: "nowrap",
                 }}>
                   {stat.value}
                 </div>
                 <div style={{
-                  fontSize: 11, fontWeight: 600,
+                  fontSize: 10, fontWeight: 600,
                   color: "var(--text-muted)", textTransform: "uppercase",
                   letterSpacing: "0.5px", marginTop: 2,
+                  whiteSpace: "nowrap",
                 }}>
                   {stat.label}
                 </div>
@@ -242,9 +255,10 @@ export default function LandingPage() {
         </div>
 
       </section>
+      </div>{/* end full-width hero wrapper */}
 
       {/* ── FEATURES ── */}
-      <section style={{ maxWidth: 780, margin: "0 auto 72px", padding: "0 24px", textAlign: "center" }}>
+      <section style={{ maxWidth: 1200, margin: "0 auto 72px", padding: "0 64px", textAlign: "center" }}>
         <h2 style={{
           fontSize: 28, fontWeight: 800,
           color: "var(--text-primary)",
@@ -257,18 +271,28 @@ export default function LandingPage() {
           The infrastructure that makes DeFi RWA trading safe and transparent.
         </p>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 14 }}>
+        <div className="features-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
           {FEATURES.map((f, i) => (
             <div key={i} style={{
               background: "var(--bg-surface)",
-              border: "1px solid var(--border)",
+              border: "none",
               borderRadius: 16,
               padding: "24px",
               textAlign: "left",
               boxShadow: "var(--card-shadow)",
               position: "relative",
               overflow: "hidden",
-            }}>
+              transition: "transform 0.2s, box-shadow 0.2s",
+            }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.transform = "translateY(-4px)";
+                (e.currentTarget as HTMLElement).style.boxShadow = `0 16px 40px ${f.glowColor}, 0 4px 12px ${f.glowColor}`;
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+                (e.currentTarget as HTMLElement).style.boxShadow = "var(--card-shadow)";
+              }}
+            >
               <div style={{
                 position: "absolute", top: -20, right: -20,
                 width: 80, height: 80, borderRadius: "50%",
@@ -295,11 +319,9 @@ export default function LandingPage() {
 
       {/* ── CTA FOOTER ── */}
       <section style={{ maxWidth: 780, margin: "0 auto 48px", padding: "0 24px" }}>
-        <div style={{
-          background: "var(--bg-surface)",
-          border: "1px solid var(--border)",
+        <div className="cta-section" style={{
           borderRadius: 20,
-          padding: "40px 48px",
+          padding: "52px 48px",
           textAlign: "center",
           position: "relative",
           overflow: "hidden",
