@@ -5,6 +5,7 @@ import { CONTRACTS, ABIS } from "@/lib/contracts";
 import { useTokenBalances } from "@/hooks/useTokenBalances";
 import { useCompliance } from "@/hooks/useCompliance";
 import { useNAV } from "@/hooks/useNAV";
+import { usePool } from "@/hooks/usePool";
 import { formatUSDC, formatRWA, formatNAV } from "@/lib/utils";
 import { Shield, Wallet, Loader2 } from "lucide-react";
 
@@ -13,6 +14,7 @@ export function Portfolio() {
   const { usdcBalance, rwaBalance, lpBalance, refetch } = useTokenBalances();
   const { isCompliant, selfWhitelist, isWhitelisting } = useCompliance();
   const { nav } = useNAV();
+  const { poolState } = usePool();
 
   const { writeContract: faucetUsdc, data: usdcHash, isPending: usdcPending } = useWriteContract();
   const { isLoading: usdcConfirming, isSuccess: usdcSuccess } = useWaitForTransactionReceipt({ hash: usdcHash });
@@ -25,7 +27,16 @@ export function Portfolio() {
   const navPrice = nav ? Number(nav) / 1e6 : 100;
   const usdcValue = usdcBalance ? Number(usdcBalance) / 1e6 : 0;
   const rwaValue = rwaBalance ? (Number(rwaBalance) / 1e18) * navPrice : 0;
-  const totalValue = usdcValue + rwaValue;
+
+  // LP value = user share of pool TVL
+  const poolTVL = poolState
+    ? (Number(poolState.reserveUSDC) / 1e6) + (Number(poolState.reserveRWA) / 1e18) * navPrice
+    : 0;
+  const totalLpSupply = poolState ? Number(poolState.totalLiquidity) / 1e18 : 0;
+  const userLp = lpBalance ? Number(lpBalance) / 1e18 : 0;
+  const lpValue = totalLpSupply > 0 ? (userLp / totalLpSupply) * poolTVL : 0;
+
+  const totalValue = usdcValue + rwaValue + lpValue;
 
   const formatCompact = (val: string) => {
     const num = parseFloat(val.replace(/,/g, ""));
@@ -214,7 +225,7 @@ export function Portfolio() {
           {[
             { label: "USDC", value: `$${usdcValue.toLocaleString("en-US", { maximumFractionDigits: 0, minimumFractionDigits: 0 })}` },
             { label: "mBUILD", value: `$${rwaValue.toFixed(2)}` },
-            { label: "LP Value", value: "—" },
+            { label: "LP Value", value: lpValue > 0 ? `$${lpValue.toLocaleString("en-US", { maximumFractionDigits: 2 })}` : "—" },
           ].map((item, i) => (
             <div key={i}>
               <div style={{
@@ -448,8 +459,8 @@ export function Portfolio() {
             symbol: "lbLP", name: "LP Token",
             letter: "LP", letterBg: "linear-gradient(135deg, #00A3FF, #00CC88)",
             amount: lpBalance ? formatRWA(lpBalance) : "0.0000",
-            usd: "—",
-            positive: false,
+            usd: lpValue > 0 ? `$${lpValue.toLocaleString("en-US", { maximumFractionDigits: 2 })}` : "—",
+            positive: lpValue > 0,
           },
         ].map((token, i, arr) => (
           <div
