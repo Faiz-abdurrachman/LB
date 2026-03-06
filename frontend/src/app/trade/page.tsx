@@ -210,8 +210,12 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
       >
         {question}
         <span
-          className="ml-3 flex-shrink-0 transition-transform duration-200 group-open:rotate-180"
-          style={{ color: "var(--text-secondary)", fontSize: 12 }}
+          className="ml-3 flex-shrink-0 group-open:rotate-180"
+          style={{
+            color: "var(--text-secondary)", fontSize: 12,
+            transition: "transform 0.2s",
+            border: "none", background: "transparent", boxShadow: "none",
+          }}
         >
           ▾
         </span>
