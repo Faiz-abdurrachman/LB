@@ -15,6 +15,7 @@ export default function PoolPage() {
         </p>
       </div>
       <PoolDashboard />
+      <div style={{ height: 48 }} />
     </div>
   );
 }
