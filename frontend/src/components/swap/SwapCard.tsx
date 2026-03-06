@@ -499,11 +499,11 @@ export function SwapCard() {
                 transition: "opacity 0.18s, transform 0.18s, box-shadow 0.18s",
               }}
               onMouseEnter={(e) => {
-                const el = e.currentTarget as HTMLElement;
+                const el = e.currentTarget as HTMLButtonElement;
                 if (!el.disabled) { el.style.opacity = "0.9"; el.style.transform = "translateY(-1px)"; }
               }}
               onMouseLeave={(e) => {
-                const el = e.currentTarget as HTMLElement;
+                const el = e.currentTarget as HTMLButtonElement;
                 el.style.opacity = "1"; el.style.transform = "translateY(0)";
               }}
             >
