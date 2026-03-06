@@ -212,18 +212,8 @@ export function SwapCard() {
               >
                 You Pay
               </span>
-              {balance !== undefined && (
-                <button
-                  onClick={() => setInputAmount(formatUnits(balance, tokenInDecimals))}
-                  className="font-semibold transition-opacity hover:opacity-70"
-                  style={{ fontSize: 12, color: "var(--accent-blue)" }}
-                >
-                  Balance: {balanceFormatted}
-                </button>
-              )}
             </div>
             <div
-              className="flex items-center gap-3 transition-all"
               style={{
                 background: "var(--bg-input)",
                 border: "1.5px solid var(--border-strong)",
@@ -241,30 +231,73 @@ export function SwapCard() {
                 (e.currentTarget as HTMLElement).style.background = "var(--bg-input)";
               }}
             >
-              {/* Token avatar */}
-              <div
-                className="rounded-full flex items-center justify-center font-extrabold flex-shrink-0 text-white"
-                style={{ width: 36, height: 36, fontSize: 13, background: isBuy ? "#2775CA" : "#1A2024" }}
-              >
-                {isBuy ? "$" : "B"}
+              {/* Balance banner */}
+              {balance !== undefined && (
+                <div style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: 10,
+                  paddingBottom: 10,
+                  borderBottom: "1px solid var(--border)",
+                }}>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: "var(--text-muted)" }}>
+                    Available
+                  </span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <span style={{
+                      fontFamily: "'Roboto Mono', monospace",
+                      fontSize: 13, fontWeight: 600,
+                      color: "var(--text-primary)",
+                    }}>
+                      {balanceFormatted} {isBuy ? "USDC" : "mBUILD"}
+                    </span>
+                    <button
+                      onClick={() => setInputAmount(formatUnits(balance, tokenInDecimals))}
+                      style={{
+                        background: "var(--accent-blue)",
+                        border: "none",
+                        borderRadius: 5,
+                        padding: "2px 9px",
+                        fontSize: 11, fontWeight: 700,
+                        color: "white", cursor: "pointer",
+                        fontFamily: "inherit",
+                        flexShrink: 0,
+                      }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = "0.8"; }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = "1"; }}
+                    >
+                      MAX
+                    </button>
+                  </div>
+                </div>
+              )}
+              {/* Input row */}
+              <div className="flex items-center gap-3">
+                <div
+                  className="rounded-full flex items-center justify-center font-extrabold flex-shrink-0 text-white"
+                  style={{ width: 36, height: 36, fontSize: 13, background: isBuy ? "#2775CA" : "#1A2024" }}
+                >
+                  {isBuy ? "$" : "B"}
+                </div>
+                <input
+                  type="number"
+                  value={inputAmount}
+                  onChange={(e) => setInputAmount(e.target.value)}
+                  placeholder="0.00"
+                  className="flex-1 bg-transparent outline-none"
+                  style={{
+                    fontFamily: "'Roboto Mono', monospace",
+                    fontSize: 22,
+                    fontWeight: 500,
+                    color: "var(--text-primary)",
+                    caretColor: "var(--accent-blue)",
+                  }}
+                />
+                <span className="font-bold flex-shrink-0" style={{ fontSize: 15, color: "var(--text-primary)" }}>
+                  {isBuy ? "USDC" : "mBUILD"}
+                </span>
               </div>
-              <input
-                type="number"
-                value={inputAmount}
-                onChange={(e) => setInputAmount(e.target.value)}
-                placeholder="0.00"
-                className="flex-1 bg-transparent outline-none"
-                style={{
-                  fontFamily: "'Roboto Mono', monospace",
-                  fontSize: 22,
-                  fontWeight: 500,
-                  color: "var(--text-primary)",
-                  caretColor: "var(--accent-blue)",
-                }}
-              />
-              <span className="font-bold flex-shrink-0" style={{ fontSize: 15, color: "var(--text-primary)" }}>
-                {isBuy ? "USDC" : "mBUILD"}
-              </span>
             </div>
           </div>
 
@@ -308,7 +341,26 @@ export function SwapCard() {
               >
                 You Receive
               </span>
-              <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>Estimated</span>
+              <span style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 4,
+                padding: "2px 8px",
+                borderRadius: 6,
+                background: "rgba(245, 158, 11, 0.08)",
+                border: "1px solid rgba(245, 158, 11, 0.18)",
+                fontSize: 10, fontWeight: 700,
+                color: "#F59E0B",
+                letterSpacing: "0.3px",
+                textTransform: "uppercase",
+              }}>
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                Estimated
+              </span>
             </div>
             <div
               className="flex items-center gap-3"
